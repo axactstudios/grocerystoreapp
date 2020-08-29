@@ -288,12 +288,17 @@ class _LoginPageState extends State<LoginPage> {
           final dbRef = FirebaseDatabase.instance.reference();
           await dbRef.once().then((DataSnapshot snapshot) async {
             Map<dynamic, dynamic> values = snapshot.value;
-            values.forEach((key, value) {
-              if (key == uid) {
-                setState(() {
-                  shopExists = true;
+            values.forEach((keys, value) {
+              dbRef.child(keys).once().then((DataSnapshot snap) {
+                Map<dynamic, dynamic> vals = snap.value;
+                vals.forEach((key, value) {
+                  if (key == uid) {
+                    setState(() {
+                      shopExists = true;
+                    });
+                  }
                 });
-              }
+              });
             });
           });
 
@@ -366,12 +371,17 @@ class _LoginPageState extends State<LoginPage> {
         final dbRef = FirebaseDatabase.instance.reference();
         await dbRef.once().then((DataSnapshot snapshot) async {
           Map<dynamic, dynamic> values = snapshot.value;
-          values.forEach((key, val) {
-            if (key == uid) {
-              setState(() {
-                shopExists = true;
+          values.forEach((keys, value) {
+            dbRef.child(keys).once().then((DataSnapshot snap) {
+              Map<dynamic, dynamic> vals = snap.value;
+              vals.forEach((key, value) {
+                if (key == uid) {
+                  setState(() {
+                    shopExists = true;
+                  });
+                }
               });
-            }
+            });
           });
         });
 
@@ -414,12 +424,17 @@ class _LoginPageState extends State<LoginPage> {
       final dbRef = FirebaseDatabase.instance.reference();
       await dbRef.once().then((DataSnapshot snapshot) async {
         Map<dynamic, dynamic> values = snapshot.value;
-        values.forEach((key, value) {
-          if (key == user.uid) {
-            setState(() {
-              shopExists = true;
+        values.forEach((keys, value) {
+          dbRef.child(keys).once().then((DataSnapshot snap) {
+            Map<dynamic, dynamic> vals = snap.value;
+            vals.forEach((key, value) {
+              if (key == user.uid) {
+                setState(() {
+                  shopExists = true;
+                });
+              }
             });
-          }
+          });
         });
       });
     }
