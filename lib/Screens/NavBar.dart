@@ -60,7 +60,7 @@ class _HomePageState extends State<HomePage> {
       handleAndroidBackButtonPress: true,
       resizeToAvoidBottomInset:
           true, // This needs to be true if you want to move up the screen when keyboard appears.
-      stateManagement: true,
+      stateManagement: false,
       hideNavigationBarWhenKeyboardShows:
           true, // Recommended to set 'resizeToAvoidBottomInset' as true while using this argument.
       decoration: NavBarDecoration(
