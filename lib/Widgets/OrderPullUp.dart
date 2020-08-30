@@ -1,6 +1,12 @@
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:printing/printing.dart';
 import 'package:flutter/material.dart';
 import 'package:grocerystoreapp/Classes/Constants.dart';
 import 'package:grocerystoreapp/Classes/Orders.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pdfLib;
+import 'package:intl/intl.dart';
 
 class OrderPullUp extends StatefulWidget {
   Order order;
@@ -10,6 +16,188 @@ class OrderPullUp extends StatefulWidget {
 }
 
 class _OrderPullUpState extends State<OrderPullUp> {
+  _generatePdfAndView(context) async {
+    final pdfLib.Document pdf = pdfLib.Document(deflate: zlib.encode);
+    pdf.addPage(pdfLib.MultiPage(
+        build: (context) => [
+              pdfLib.Column(
+                  mainAxisAlignment: pdfLib.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pdfLib.Padding(
+                      padding: pdfLib.EdgeInsets.only(top: 10.0, bottom: 10.0),
+                      child: pdfLib.Row(children: [
+                        pdfLib.Text(
+                          'Order Details',
+                          style: pdfLib.TextStyle(
+                            fontSize: 35,
+                            color: PdfColors.black,
+                          ),
+                        ),
+                      ]),
+                    ),
+                    pdfLib.Padding(
+                      padding: pdfLib.EdgeInsets.only(top: 5.0, bottom: 5.0),
+                      child: pdfLib.Row(children: [
+                        pdfLib.Text(
+                          widget.order.customerName,
+                          style: pdfLib.TextStyle(
+                            fontWeight: pdfLib.FontWeight.bold,
+                            fontSize: 25,
+                            color: PdfColors.black,
+                          ),
+                        ),
+                      ]),
+                    ),
+                    pdfLib.Padding(
+                      padding: pdfLib.EdgeInsets.only(top: 5.0, bottom: 5.0),
+                      child: pdfLib.Row(children: [
+                        pdfLib.Container(
+                          width: 200,
+                          child: pdfLib.Text(
+                            widget.order.customerAddress +
+                                ' - ' +
+                                widget.order.customerZip,
+                            style: pdfLib.TextStyle(
+                              fontSize: 15,
+                              color: PdfColors.black,
+                            ),
+                          ),
+                        ),
+                      ]),
+                    ),
+                    pdfLib.Padding(
+                      padding: pdfLib.EdgeInsets.only(top: 5.0, bottom: 5.0),
+                      child: pdfLib.Row(children: [
+                        pdfLib.Text(
+                          'Mobile Number : ${widget.order.customerPhone}',
+                          style: pdfLib.TextStyle(
+                            fontSize: 15,
+                            color: PdfColors.black,
+                          ),
+                        ),
+                      ]),
+                    ),
+                    pdfLib.SizedBox(
+                      height: 15,
+                    ),
+                    pdfLib.Padding(
+                      padding: pdfLib.EdgeInsets.only(top: 5.0, bottom: 5.0),
+                      child: pdfLib.Row(
+                          mainAxisAlignment:
+                              pdfLib.MainAxisAlignment.spaceBetween,
+                          children: [
+                            pdfLib.Text(
+                              'Item Name',
+                              style: pdfLib.TextStyle(
+                                fontSize: 20,
+                                color: PdfColors.black,
+                              ),
+                            ),
+                            pdfLib.Text(
+                              'Item Quantity',
+                              style: pdfLib.TextStyle(
+                                fontSize: 20,
+                                color: PdfColors.black,
+                              ),
+                            ),
+                          ]),
+                    ),
+                    pdfLib.SizedBox(
+                      height: 10,
+                      child: pdfLib.Divider(color: PdfColors.black),
+                    ),
+                    pdfLib.ListView.builder(
+                        itemCount: widget.order.itemsName.length,
+                        itemBuilder: (context, index) {
+                          return pdfLib.Padding(
+                            padding:
+                                pdfLib.EdgeInsets.only(top: 2.0, bottom: 2.0),
+                            child: pdfLib.Row(
+                                mainAxisAlignment:
+                                    pdfLib.MainAxisAlignment.spaceBetween,
+                                children: [
+                                  pdfLib.Text(
+                                    widget.order.itemsName[index],
+                                    style: pdfLib.TextStyle(
+                                      fontSize: 15,
+                                      color: PdfColors.black,
+                                    ),
+                                  ),
+                                  pdfLib.Text(
+                                    widget.order.itemsQty[index].toString(),
+                                    style: pdfLib.TextStyle(
+                                      fontSize: 15,
+                                      color: PdfColors.black,
+                                    ),
+                                  ),
+                                ]),
+                          );
+                        }),
+                    pdfLib.SizedBox(
+                      height: 10,
+                      child: pdfLib.Divider(color: PdfColors.black),
+                    ),
+                    pdfLib.Padding(
+                      padding: pdfLib.EdgeInsets.only(top: 20.0, bottom: 5.0),
+                      child: pdfLib.Row(
+                          mainAxisAlignment:
+                              pdfLib.MainAxisAlignment.spaceBetween,
+                          children: [
+                            pdfLib.Text(
+                              'Order Amount : ',
+                              style: pdfLib.TextStyle(
+                                fontSize: 20,
+                                color: PdfColors.black,
+                              ),
+                            ),
+                            pdfLib.Text(
+                              widget.order.orderAmount,
+                              style: pdfLib.TextStyle(
+                                fontSize: 20,
+                                color: PdfColors.black,
+                              ),
+                            ),
+                          ]),
+                    ),
+                    pdfLib.Padding(
+                      padding: pdfLib.EdgeInsets.only(top: 5.0, bottom: 5.0),
+                      child: pdfLib.Row(
+                          mainAxisAlignment:
+                              pdfLib.MainAxisAlignment.spaceBetween,
+                          children: [
+                            pdfLib.Text(
+                              'Ordered on : ',
+                              style: pdfLib.TextStyle(
+                                fontSize: 20,
+                                color: PdfColors.black,
+                              ),
+                            ),
+                            pdfLib.Text(
+                              widget.order.orderDate +
+                                  ' at ' +
+                                  widget.order.orderTime,
+                              style: pdfLib.TextStyle(
+                                fontSize: 20,
+                                color: PdfColors.black,
+                              ),
+                            ),
+                          ]),
+                    )
+                  ])
+            ]));
+
+    final String dir = (await getApplicationDocumentsDirectory()).path;
+    String dateTime = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    final String path = '$dir/${widget.order.customerName} $dateTime.pdf';
+    final File file = File(path);
+    await file.writeAsBytes(pdf.save());
+    await Printing.layoutPdf(
+        onLayout: (PdfPageFormat format) async => pdf.save());
+    //Navigator.of(context).push(MaterialPageRoute(
+    //builder: (_) => PdfViewerPage(path: path),
+    //));
+  }
+
   @override
   Widget build(BuildContext context) {
     final pHeight = MediaQuery.of(context).size.height;
@@ -27,6 +215,15 @@ class _OrderPullUpState extends State<OrderPullUp> {
               ),
             ),
           ),
+          IconButton(
+            icon: Icon(
+              Icons.print,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              _generatePdfAndView(context);
+            },
+          )
         ],
       ),
       body: Padding(
