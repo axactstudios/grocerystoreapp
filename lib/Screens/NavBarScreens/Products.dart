@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:grocerystoreapp/Classes/Constants.dart';
 import 'package:grocerystoreapp/Classes/Products.dart';
+import 'package:grocerystoreapp/Widgets/UpdateProduct.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Products extends StatefulWidget {
@@ -30,14 +32,16 @@ class _ProductsState extends State<Products> {
         String shopKey = key;
         dbRef.child(shopKey).once().then((DataSnapshot snap) {
           Map<dynamic, dynamic> vals = snap.value;
-          vals.forEach((keys, value) {
+          vals.forEach((keys, value) async {
             if (keys == user.uid && shopKey != 'Users') {
-              setState(() async {
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                prefs.setString('category', shopKey);
-                shopCategory = shopKey;
-                getCategories();
-              });
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              prefs.setString('category', shopKey);
+              shopCategory = shopKey;
+              if (this.mounted) {
+                setState(() {
+                  getCategories();
+                });
+              }
             }
           });
         });
@@ -92,6 +96,7 @@ class _ProductsState extends State<Products> {
         product.price = await value['price'].toString();
         product.desc = await value['desc'];
         product.imageUrl = await value['imageUrl'];
+        product.stockQty = await value['stockQty'];
         products.add(product);
       });
       setState(() {
@@ -319,29 +324,99 @@ class _ProductsState extends State<Products> {
                                                 ),
                                               ],
                                             ),
-                                            InkWell(
-                                              onTap: () {
-                                                delete(item.key);
-                                              },
-                                              child: Container(
-                                                height: pHeight * 0.04,
-                                                width: pWidth * 0.574,
-                                                decoration: BoxDecoration(
-                                                  color: kSecondaryColor,
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
+                                            Row(
+                                              children: <Widget>[
+                                                Text(
+                                                  'Stock Quantity : ',
+                                                  style: TextStyle(
+                                                      color: kSecondaryColor,
+                                                      fontSize: pHeight * 0.018,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontFamily: 'Poppins'),
                                                 ),
-                                                child: Center(
-                                                  child: Text(
-                                                    'Delete Product',
-                                                    style: TextStyle(
-                                                        fontFamily: 'Poppins',
-                                                        color: Colors.white,
-                                                        fontSize:
-                                                            pHeight * 0.025),
+                                                Text(
+                                                  item.stockQty.toString(),
+                                                  style: TextStyle(
+                                                      color: kSecondaryColor,
+                                                      fontSize: pHeight * 0.018,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontFamily: 'Poppins'),
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              children: <Widget>[
+                                                InkWell(
+                                                  onTap: () {
+                                                    Navigator.pushReplacement(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            UpdateProduct(
+                                                          item: item,
+                                                          shopCategory:
+                                                              shopCategory,
+                                                          productCategory:
+                                                              categories[
+                                                                  productsIndex],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: Container(
+                                                    height: pHeight * 0.04,
+                                                    width: pWidth * 0.27,
+                                                    decoration: BoxDecoration(
+                                                      color: kSecondaryColor,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                    ),
+                                                    child: Center(
+                                                      child: Text(
+                                                        'Update',
+                                                        style: TextStyle(
+                                                            fontFamily:
+                                                                'Poppins',
+                                                            color: Colors.white,
+                                                            fontSize: pHeight *
+                                                                0.018),
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
+                                                SizedBox(
+                                                  width: pWidth * 0.04,
+                                                ),
+                                                InkWell(
+                                                  onTap: () {
+                                                    delete(item.key);
+                                                  },
+                                                  child: Container(
+                                                    height: pHeight * 0.04,
+                                                    width: pWidth * 0.27,
+                                                    decoration: BoxDecoration(
+                                                      color: kSecondaryColor,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                    ),
+                                                    child: Center(
+                                                      child: Text(
+                                                        'Delete',
+                                                        style: TextStyle(
+                                                            fontFamily:
+                                                                'Poppins',
+                                                            color: Colors.white,
+                                                            fontSize: pHeight *
+                                                                0.018),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ],
                                         ),
