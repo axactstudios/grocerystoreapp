@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:grocerystoreapp/Classes/Constants.dart';
 import 'package:grocerystoreapp/Classes/Products.dart';
+import 'package:grocerystoreapp/Screens/NavBarScreens/AddProduct.dart';
 import 'package:grocerystoreapp/Widgets/UpdateProduct.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -123,7 +124,7 @@ class _ProductsState extends State<Products> {
         .child(productKey)
         .remove()
         .then((value) {
-      getProducts();
+      getCategories();
     });
   }
 
@@ -134,12 +135,37 @@ class _ProductsState extends State<Products> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: kSecondaryColor,
-        title: Center(
-          child: Text(
-            'Grocery Store App',
-            style: TextStyle(fontFamily: 'Poppins', fontSize: pHeight * 0.025),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.add,
+              color: kSecondaryColor,
+            ),
           ),
-        ),
+          Expanded(
+            child: Center(
+              child: Text(
+                'Grocery Store App',
+                style:
+                    TextStyle(fontFamily: 'Poppins', fontSize: pHeight * 0.025),
+              ),
+            ),
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddProduct(),
+                ),
+              );
+            },
+          )
+        ],
       ),
       body: Column(
         children: <Widget>[
