@@ -274,6 +274,7 @@ class _LoginPageState extends State<LoginPage> {
   bool isCodeSent = false;
   String _verificationId;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
   void _onVerifyCode() async {
     setState(() {
       isCodeSent = true;
@@ -284,39 +285,7 @@ class _LoginPageState extends State<LoginPage> {
           .signInWithCredential(phoneAuthCredential)
           .then((AuthResult value) async {
         if (value.user != null) {
-          String uid = value.user.uid;
-          final dbRef = FirebaseDatabase.instance.reference();
-          await dbRef.once().then((DataSnapshot snapshot) async {
-            Map<dynamic, dynamic> values = snapshot.value;
-            values.forEach((keys, value) {
-              dbRef.child(keys).once().then((DataSnapshot snap) {
-                Map<dynamic, dynamic> vals = snap.value;
-                vals.forEach((key, value) {
-                  if (key == uid) {
-                    setState(() {
-                      shopExists = true;
-                    });
-                  }
-                });
-              });
-            });
-          });
-
-          if (shopExists) {
-            Navigator.pushReplacement(
-              context,
-              CupertinoPageRoute(
-                builder: (context) => HomePage(),
-              ),
-            );
-          } else {
-            Navigator.pushReplacement(
-              context,
-              CupertinoPageRoute(
-                builder: (context) => RegistrationPage(),
-              ),
-            );
-          }
+          await existence(value.user.uid);
         } else {
           showToast("Error validating OTP, try again", Colors.white);
         }
@@ -367,39 +336,7 @@ class _LoginPageState extends State<LoginPage> {
         .signInWithCredential(_authCredential)
         .then((AuthResult value) async {
       if (value.user != null) {
-        String uid = value.user.uid;
-        final dbRef = FirebaseDatabase.instance.reference();
-        await dbRef.once().then((DataSnapshot snapshot) async {
-          Map<dynamic, dynamic> values = snapshot.value;
-          values.forEach((keys, value) {
-            dbRef.child(keys).once().then((DataSnapshot snap) {
-              Map<dynamic, dynamic> vals = snap.value;
-              vals.forEach((key, value) {
-                if (key == uid) {
-                  setState(() {
-                    shopExists = true;
-                  });
-                }
-              });
-            });
-          });
-        });
-
-        if (shopExists) {
-          Navigator.pushReplacement(
-            context,
-            CupertinoPageRoute(
-              builder: (context) => HomePage(),
-            ),
-          );
-        } else {
-          Navigator.pushReplacement(
-            context,
-            CupertinoPageRoute(
-              builder: (context) => RegistrationPage(),
-            ),
-          );
-        }
+        await existence(value.user.uid);
       } else {
         showToast("Error validating OTP, try again", Colors.white);
       }
@@ -421,38 +358,51 @@ class _LoginPageState extends State<LoginPage> {
     final FirebaseUser user =
         (await FirebaseAuth.instance.signInWithCredential(credential)).user;
     if (user != null) {
-      final dbRef = FirebaseDatabase.instance.reference();
-      await dbRef.once().then((DataSnapshot snapshot) async {
-        Map<dynamic, dynamic> values = snapshot.value;
-        values.forEach((keys, value) {
-          dbRef.child(keys).once().then((DataSnapshot snap) {
-            Map<dynamic, dynamic> vals = snap.value;
-            vals.forEach((key, value) {
-              if (key == user.uid) {
-                setState(() {
-                  shopExists = true;
-                });
-              }
-            });
+      await existence(user.uid);
+    }
+
+    return user;
+  }
+
+  Future<bool> existence(String uid) async {
+    bool shopExists = false;
+
+    final dbRef = FirebaseDatabase.instance.reference();
+    await dbRef.once().then((DataSnapshot snapshot) async {
+      Map<dynamic, dynamic> values = snapshot.value;
+      values.forEach((keys, value) {
+        dbRef.child(keys).once().then((DataSnapshot snap) {
+          Map<dynamic, dynamic> vals = snap.value;
+          vals.forEach((key, value) {
+            if (key == uid) {
+              setState(() {
+                shopExists = true;
+                print('I found a match');
+                print(key);
+                return true;
+              });
+            }
           });
+        }).then((value) {
+          if (shopExists) {
+            print('Exists');
+            Navigator.pushReplacement(
+              context,
+              CupertinoPageRoute(
+                builder: (context) => HomePage(),
+              ),
+            );
+          } else {
+            print('Does not exist');
+            Navigator.pushReplacement(
+              context,
+              CupertinoPageRoute(
+                builder: (context) => RegistrationPage(),
+              ),
+            );
+          }
         });
       });
-    }
-    if (shopExists) {
-      Navigator.pushReplacement(
-        context,
-        CupertinoPageRoute(
-          builder: (context) => HomePage(),
-        ),
-      );
-    } else {
-      Navigator.pushReplacement(
-        context,
-        CupertinoPageRoute(
-          builder: (context) => RegistrationPage(),
-        ),
-      );
-    }
-    return user;
+    });
   }
 }
