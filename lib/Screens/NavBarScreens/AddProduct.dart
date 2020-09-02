@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:grocerystoreapp/Classes/Items.dart';
 import 'package:path/path.dart' as p;
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,6 +27,7 @@ class _AddProductState extends State<AddProduct> {
   TextEditingController qty = new TextEditingController(text: '');
   TextEditingController newCategory = new TextEditingController(text: '');
 
+  Items itms;
   String category = '';
   String imageUrl;
   String fileType = '';
@@ -40,6 +42,11 @@ class _AddProductState extends State<AddProduct> {
   List<String> categories = [];
   String shopCategory = '';
   bool isFetchingCategories = false;
+  bool isFetchingItems = false;
+  List<Items> items = [];
+  String item = '';
+  int index = 0;
+  bool preExist = false;
   FirebaseAuth mAuth = FirebaseAuth.instance;
 
 //  void getShopCategory() async {
@@ -177,9 +184,37 @@ class _AddProductState extends State<AddProduct> {
     });
   }
 
+  void getItems() async {
+    items.clear();
+    setState(() {
+      isFetchingItems = true;
+    });
+    final dbRef = FirebaseDatabase.instance.reference().child('Products');
+    dbRef.once().then((DataSnapshot snapshot) {
+      Map<dynamic, dynamic> values = snapshot.value;
+      values.forEach((key, value) async {
+        Items itm = Items();
+        itm.name = await value['name'];
+        itm.desc = await value['desc'];
+        itm.price = await value['price'];
+        itm.imageUrl = await value['imageUrl'];
+        items.add(itm);
+      });
+      setState(() {
+        isFetchingItems = false;
+        print('Fetched');
+        itms = items[0];
+        index = 0;
+        item = items[0].name;
+        print(item);
+      });
+    });
+  }
+
   @override
   void initState() {
     getCategories();
+    getItems();
   }
 
   @override
@@ -246,6 +281,82 @@ class _AddProductState extends State<AddProduct> {
                                         ),
                                 ),
                               ),
+                              SizedBox(
+                                height: pHeight * 0.02,
+                              ),
+                              CheckboxListTile(
+                                title: Text(
+                                  "Select a product from catalogue",
+                                  style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontSize: pHeight * 0.02),
+                                ),
+                                value: preExist,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    preExist = newValue;
+                                    itms = items[0];
+                                    name.text = items[0].name;
+                                    price.text = items[0].price.toString();
+                                    desc.text = items[0].desc;
+                                    imageUrl = items[0].imageUrl;
+                                  });
+                                },
+                                controlAffinity: ListTileControlAffinity
+                                    .leading, //  <-- leading Checkbox
+                              ),
+                              SizedBox(
+                                height: pHeight * 0.01,
+                              ),
+                              preExist
+                                  ? (isFetchingItems
+                                      ? SpinKitFadingFour(
+                                          color: kSecondaryColor,
+                                        )
+                                      : Padding(
+                                          padding: const EdgeInsets.all(6.0),
+                                          child: DropdownButton<Items>(
+                                            value: itms,
+                                            elevation: 16,
+                                            isExpanded: true,
+                                            dropdownColor: Colors.white,
+                                            icon: Icon(
+                                              Icons.keyboard_arrow_down,
+                                              size: pHeight * 0.035,
+                                              color: kSecondaryColor,
+                                            ),
+                                            style: TextStyle(
+                                              fontFamily: 'Poppins',
+                                              color: kSecondaryColor,
+                                              fontSize: pHeight * 0.022,
+                                            ),
+                                            underline: Container(
+                                              color: kPrimaryColor,
+                                            ),
+                                            onChanged: (Items newValue) {
+                                              setState(() {
+                                                itms = newValue;
+                                                item = newValue.name;
+                                                name.text = newValue.name;
+                                                price.text =
+                                                    newValue.price.toString();
+                                                desc.text = newValue.desc;
+                                                imageUrl = newValue.imageUrl;
+                                              });
+                                            },
+                                            items: items
+                                                .map<DropdownMenuItem<Items>>(
+                                                    (Items val) {
+                                              return DropdownMenuItem<Items>(
+                                                value: val,
+                                                child: Text(val.name),
+                                              );
+                                            }).toList(),
+                                          ),
+                                        ))
+                                  : SizedBox(
+                                      height: pHeight * 0.01,
+                                    ),
                               SizedBox(
                                 height: pHeight * 0.01,
                               ),
@@ -464,6 +575,9 @@ class _AddProductState extends State<AddProduct> {
                                     color: Colors.red,
                                   )
                                 ],
+                              ),
+                              SizedBox(
+                                height: pHeight * 0.1,
                               )
                             ],
                           ),
