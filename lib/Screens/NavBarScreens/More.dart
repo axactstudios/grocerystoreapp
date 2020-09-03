@@ -6,6 +6,7 @@ import 'package:grocerystoreapp/Classes/Constants.dart';
 import 'package:grocerystoreapp/Screens/Auth/LoginPage.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class More extends StatefulWidget {
   @override
@@ -118,28 +119,33 @@ class _MoreState extends State<More> {
                       ),
                     ),
                   ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 19.5),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: pWidth * 0.144,
-                  ),
-                  Icon(
-                    Icons.info_outline,
-                    size: 40,
-                  ),
-                  SizedBox(
-                    width: pWidth * 0.0853,
-                  ),
-                  Text(
-                    'About',
-                    style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black),
-                  )
-                ],
+            InkWell(
+              onTap: () {
+                _launchURL('https://www.google.com/');
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 19.5),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: pWidth * 0.144,
+                    ),
+                    Icon(
+                      Icons.info_outline,
+                      size: 40,
+                    ),
+                    SizedBox(
+                      width: pWidth * 0.0853,
+                    ),
+                    Text(
+                      'About',
+                      style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black),
+                    )
+                  ],
+                ),
               ),
             ),
             SizedBox(
@@ -151,28 +157,33 @@ class _MoreState extends State<More> {
                 thickness: 0.5,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 19.5),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: pWidth * 0.144,
-                  ),
-                  Icon(
-                    Icons.warning,
-                    size: 40,
-                  ),
-                  SizedBox(
-                    width: pWidth * 0.0853,
-                  ),
-                  Text(
-                    'Send Feedback',
-                    style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black),
-                  )
-                ],
+            InkWell(
+              onTap: () {
+                _launchURL('https://www.google.com/');
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 19.5),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: pWidth * 0.144,
+                    ),
+                    Icon(
+                      Icons.warning,
+                      size: 40,
+                    ),
+                    SizedBox(
+                      width: pWidth * 0.0853,
+                    ),
+                    Text(
+                      'Send Feedback',
+                      style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black),
+                    )
+                  ],
+                ),
               ),
             ),
             SizedBox(
@@ -227,5 +238,14 @@ class _MoreState extends State<More> {
         ),
       ),
     );
+  }
+
+  _launchURL(String launchUrl) async {
+    String url = launchUrl;
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }
