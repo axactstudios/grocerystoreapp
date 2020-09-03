@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:grocerystoreapp/Screens/Auth/ReferralCode.dart';
 import 'package:path/path.dart' as p;
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -451,13 +452,20 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         padding: const EdgeInsets.only(right: 8.0),
                         child: FloatingActionButton(
                           onPressed: () async {
+                            FirebaseUser user =
+                                await FirebaseAuth.instance.currentUser();
                             if (_formKey.currentState.validate()) {
                               if (imageUrl != null) {
                                 await writeData();
                                 Navigator.push(
                                   context,
                                   CupertinoPageRoute(
-                                    builder: (context) => HomePage(),
+                                    builder: (context) => ReferralCode(
+                                      shopAddress: address.text,
+                                      shopName: name.text,
+                                      shopPhone: phone.text,
+                                      shopUid: user.uid,
+                                    ),
                                   ),
                                 );
                               } else {
