@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:permissions_plugin/permissions_plugin.dart';
 
 import 'Auth/LoginPage.dart';
 import 'NavBar.dart';
@@ -15,6 +16,10 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     new Future.delayed(Duration(seconds: 3), () async {
+      Map<Permission, PermissionState> permission =
+          await PermissionsPlugin.requestPermissions([
+        Permission.ACCESS_FINE_LOCATION,
+      ]);
       FirebaseUser user = await mAuth.currentUser();
       if (user == null) {
         Navigator.pushReplacement(
