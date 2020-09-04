@@ -28,6 +28,21 @@ class _ReferralCodeState extends State<ReferralCode> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+        body: Form(
+      child: Column(
+        children: [
+          TextFormField(
+            controller: referralCode,
+          ),
+          RaisedButton(
+            onPressed: () {
+              writeData();
+            },
+            child: Text('Enter'),
+          )
+        ],
+      ),
+    ));
   }
 }
