@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:random_string/random_string.dart';
 
 class ReferralCode extends StatefulWidget {
   String shopName, shopPhone, shopAddress, shopUid;
@@ -13,11 +14,14 @@ class _ReferralCodeState extends State<ReferralCode> {
   TextEditingController referralCode = new TextEditingController(text: '');
 
   void writeData() async {
+    String key = await randomAlphaNumeric(15);
+
     final dbRef = FirebaseDatabase.instance
         .reference()
         .child('Distributors')
         .child(referralCode.text)
-        .child('Shops');
+        .child('Shops')
+        .child(key);
     dbRef.set({
       'shopName': widget.shopName,
       'shopPhone': widget.shopPhone,
