@@ -113,7 +113,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
     setState(() {
       controller.location = LatLng(lat, lng);
       getLocation();
-      print(latlng);
     });
   }
 
