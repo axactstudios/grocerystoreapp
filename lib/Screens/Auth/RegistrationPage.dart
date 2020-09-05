@@ -8,7 +8,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:gps/gps.dart';
 import 'package:grocerystoreapp/Classes/Constants.dart';
@@ -17,6 +17,7 @@ import 'package:map/map.dart';
 
 import '../NavBar.dart';
 
+//TODO:TOast Used
 class RegistrationPage extends StatefulWidget {
   @override
   _RegistrationPageState createState() => _RegistrationPageState();
@@ -46,15 +47,17 @@ class _RegistrationPageState extends State<RegistrationPage> {
     storageReference = firebaseStorage.child("$category/${user.uid}/$filename");
 
     final StorageUploadTask uploadTask = storageReference.putFile(file);
-    Fluttertoast.showToast(msg: 'Uploading...', gravity: ToastGravity.CENTER);
+    // Fluttertoast.showToast(msg: 'Uploading...', gravity: ToastGravity.CENTER);
+    print('Uploading');
     final StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
     final String url = (await downloadUrl.ref.getDownloadURL());
     print("URL is $url");
     setState(() {
       imageUrl = url;
     });
-    Fluttertoast.showToast(
-        msg: 'Upload Complete', gravity: ToastGravity.CENTER);
+    print('Uploaded');
+    // Fluttertoast.showToast(
+    //     msg: 'Upload Complete', gravity: ToastGravity.CENTER);
   }
 
   Future filePicker(BuildContext context) async {
@@ -468,10 +471,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
                                   ),
                                 );
                               } else {
-                                Fluttertoast.showToast(
-                                    msg: 'Please add an image first',
-                                    textColor: Colors.black,
-                                    backgroundColor: Colors.white);
+                                print('add an image first');
+                                // Fluttertoast.showToast(
+                                //     msg: 'Please add an image first',
+                                //     textColor: Colors.black,
+                                //     backgroundColor: Colors.white);
                               }
                             }
                           },

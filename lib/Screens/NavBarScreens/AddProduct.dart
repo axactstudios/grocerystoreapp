@@ -8,13 +8,14 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 import 'package:grocerystoreapp/Classes/Constants.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'Products.dart';
 
+//TODO:TOast Used
 class AddProduct extends StatefulWidget {
   @override
   _AddProductState createState() => _AddProductState();
@@ -138,15 +139,17 @@ class _AddProductState extends State<AddProduct> {
         .child("$shopCategory/${user.uid}/$prodCategory/$filename");
 
     final StorageUploadTask uploadTask = storageReference.putFile(file);
-    Fluttertoast.showToast(msg: 'Uploading...', gravity: ToastGravity.CENTER);
+    // Fluttertoast.showToast(msg: 'Uploading...', gravity: ToastGravity.CENTER);
+    print('Uploading');
     final StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
     final String url = (await downloadUrl.ref.getDownloadURL());
     print("URL is $url");
     setState(() {
       imageUrl = url;
     });
-    Fluttertoast.showToast(
-        msg: 'Upload Complete', gravity: ToastGravity.CENTER);
+    print('Upload Completed');
+    // Fluttertoast.showToast(
+    //     msg: 'Upload Complete', gravity: ToastGravity.CENTER);
   }
 
   Future filePicker(BuildContext context) async {
@@ -236,16 +239,15 @@ class _AddProductState extends State<AddProduct> {
         child: Column(
           children: <Widget>[
             isFetchingCategories
-                ? Expanded(
-                    child: Center(
-                      child: SpinKitFadingFour(
-                        color: kSecondaryColor,
-                      ),
+                ? Center(
+                    child: SpinKitFadingFour(
+                      color: kSecondaryColor,
                     ),
                   )
                 : SingleChildScrollView(
                     child: Container(
                       width: pWidth,
+                      height: pHeight,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Form(
@@ -539,9 +541,10 @@ class _AddProductState extends State<AddProduct> {
                                     onPressed: () async {
                                       if (_formKey.currentState.validate()) {
                                         if (imageUrl == null) {
-                                          Fluttertoast.showToast(
-                                              msg: 'Add a image first',
-                                              gravity: ToastGravity.CENTER);
+                                          print('Add a image first');
+                                          // Fluttertoast.showToast(
+                                          //     msg: 'Add a image first',
+                                          //     gravity: ToastGravity.CENTER);
                                         } else {
                                           await writeData();
                                           Navigator.pushReplacement(

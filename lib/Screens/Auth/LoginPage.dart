@@ -1,15 +1,15 @@
-import 'package:device_info/device_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+
+import 'package:google_fonts/google_fonts.dart';
 import 'package:grocerystoreapp/Classes/Constants.dart';
 import 'package:grocerystoreapp/Classes/CustomIcons.dart';
-
-import '../NavBar.dart';
-import 'RegistrationPage.dart';
+import 'package:grocerystoreapp/Screens/Auth/RegistrationPage.dart';
+import 'package:grocerystoreapp/Screens/NavBar.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -17,16 +17,15 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  bool shopExists = false;
-
   TextEditingController phone = new TextEditingController(text: '');
   TextEditingController otp = new TextEditingController(text: '');
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final _formKey = GlobalKey<FormState>();
-
   @override
   Widget build(BuildContext context) {
     final pHeight = MediaQuery.of(context).size.height;
+    final pWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: kPrimaryColor,
@@ -36,23 +35,34 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             children: <Widget>[
               Container(
-                margin: EdgeInsets.only(top: pHeight * 0.06),
-                child: Text(
-                  'Logo',
-                  style: TextStyle(
-                      fontSize: pHeight * 0.045, fontFamily: 'Poppins'),
-                ),
+                margin: EdgeInsets.only(top: pHeight * 0.08),
+                child: Text('Logo',
+                    style: GoogleFonts.openSans(
+                        textStyle: TextStyle(
+                            fontSize: 0.045 * pHeight,
+                            fontWeight: FontWeight.bold))),
               ),
               SizedBox(
-                height: pHeight * 0.042,
+                height: pHeight * 0.03,
               ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Image.asset('images/onboarding.png'),
+                child: Image(
+                  image: AssetImage(
+                    'images/onboarding.png',
+                  ),
+                  height: 0.22 * pHeight,
+                ),
               ),
-              SizedBox(
-                height: pHeight * 0.01,
-              ),
+//              SizedBox(
+//                height: pHeight * 0.001,
+//              ),
+              Text('Onboarding',
+                  style: GoogleFonts.openSans(
+                      textStyle: TextStyle(fontSize: 0.035 * pHeight))),
+              SizedBox(height: 0.01 * pHeight),
+              Image(image: AssetImage('images/Repeat Grid 2.png')),
+              SizedBox(height: 0.01 * pHeight),
               Expanded(
                 child: Align(
                   alignment: Alignment.bottomCenter,
@@ -67,79 +77,99 @@ class _LoginPageState extends State<LoginPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       children: <Widget>[
+                        Spacer(),
                         Padding(
-                          padding: const EdgeInsets.only(
-                            left: 32.0,
-                            right: 32,
-                            top: 36,
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                flex: 6,
-                                child: TextFormField(
-                                  validator: (value) {
-                                    if (value.length < 10) {
-                                      return 'Invalid phone number';
-                                    } else {
-                                      return null;
-                                    }
-                                  },
-                                  controller: phone,
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: kFormColor,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    hintText: 'Enter Mobile Number',
-                                  ),
-                                  keyboardType: TextInputType.phone,
-                                ),
-                              ),
-                              Expanded(
-                                  flex: 1,
-                                  child: InkWell(
-                                    onTap: () {
-                                      _onVerifyCode();
-                                    },
-                                    child: Icon(
-                                      Icons.send,
-                                      color: Colors.white,
-                                    ),
-                                  ))
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 32.0,
-                            right: 32,
-                            top: 15,
+                          padding: EdgeInsets.only(
+                            left: pWidth * 0.1,
+                            right: pWidth * 0.1,
                           ),
                           child: TextFormField(
                             validator: (value) {
-                              if (value.length < 6) {
-                                return 'Invalid OTP';
+                              if (value.length < 10) {
+                                return 'Invalid phone number';
                               } else {
                                 return null;
                               }
                             },
-                            controller: otp,
+                            controller: phone,
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: kFormColor,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              hintText: 'Enter OTP',
+                              hintText: 'Enter Mobile Number',
                             ),
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.phone,
                           ),
                         ),
+                        Spacer(),
                         Padding(
-                          padding: const EdgeInsets.only(
-                              top: 20, left: 90, right: 90),
+                          padding: EdgeInsets.only(
+                            left: pWidth * 0.1,
+                            right: pWidth * 0.1,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                flex: 8,
+                                child: TextFormField(
+                                  validator: (value) {
+                                    if (value.length < 6) {
+                                      return 'Invalid OTP';
+                                    } else {
+                                      return null;
+                                    }
+                                  },
+                                  controller: otp,
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: kFormColor,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    hintText: 'Enter OTP',
+                                  ),
+                                  keyboardType: TextInputType.number,
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Container(),
+                              ),
+                              Expanded(
+                                flex: 3,
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: InkWell(
+                                      onTap: () {
+                                        _onVerifyCode();
+                                      },
+                                      child: Container(
+                                          decoration: BoxDecoration(
+                                              color: kFormColor,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(10))),
+                                          child: Padding(
+                                            padding:
+                                                EdgeInsets.all(pWidth * 0.03),
+                                            child: Text(
+                                              'Get OTP',
+                                              textAlign: TextAlign.center,
+                                              style: GoogleFonts.openSans(),
+                                            ),
+                                          ))),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Spacer(),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: pWidth * 0.2, right: pWidth * 0.2),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
@@ -241,6 +271,7 @@ class _LoginPageState extends State<LoginPage> {
                                   child: Icon(
                                     Icons.chevron_right,
                                     size: 40,
+//                                color: Color.fromARGB(255, 242, 96, 22),
                                   ),
                                 ),
                               ),
@@ -256,25 +287,29 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
       ),
+//      floatingActionButton: FloatingActionButton(
+////        tooltip: 'Increment',
+//        child: Icon(Icons.add),
+//      ),
     );
   }
 
   void showToast(message, Color color) {
-    Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 2,
-      backgroundColor: color,
-      textColor: Colors.pinkAccent,
-      fontSize: 16.0,
-    );
+    // Fluttertoast.showToast(
+    //   msg: message,
+    //   toastLength: Toast.LENGTH_LONG,
+    //   gravity: ToastGravity.BOTTOM,
+    //   timeInSecForIosWeb: 2,
+    //   backgroundColor: color,
+    //   textColor: kSecondaryColor,
+    //   fontSize: 16.0,
+    // );
+    print(message);
   }
 
   bool isCodeSent = false;
   String _verificationId;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-
   void _onVerifyCode() async {
     setState(() {
       isCodeSent = true;
@@ -283,9 +318,30 @@ class _LoginPageState extends State<LoginPage> {
         (AuthCredential phoneAuthCredential) {
       _firebaseAuth
           .signInWithCredential(phoneAuthCredential)
-          .then((AuthResult value) async {
+          .then((AuthResult value) {
         if (value.user != null) {
-          await existence(value.user.uid);
+          final dbRef = FirebaseDatabase.instance
+              .reference()
+              .child('Users')
+              .child(value.user.uid);
+          dbRef.once().then((DataSnapshot snapshot) async {
+            if (snapshot.value == null) {
+              Navigator.pushReplacement(
+                context,
+                CupertinoPageRoute(
+                  builder: (context) => RegistrationPage(),
+                ),
+              );
+            } else {
+              print(snapshot.value);
+              Navigator.pushReplacement(
+                context,
+                CupertinoPageRoute(
+                  builder: (context) => HomePage(),
+                ),
+              );
+            }
+          });
         } else {
           showToast("Error validating OTP, try again", Colors.white);
         }
@@ -334,9 +390,30 @@ class _LoginPageState extends State<LoginPage> {
 
     _firebaseAuth
         .signInWithCredential(_authCredential)
-        .then((AuthResult value) async {
+        .then((AuthResult value) {
       if (value.user != null) {
-        await existence(value.user.uid);
+        final dbRef = FirebaseDatabase.instance
+            .reference()
+            .child('Users')
+            .child(value.user.uid);
+        dbRef.once().then((DataSnapshot snapshot) async {
+          if (snapshot.value == null) {
+            Navigator.pushReplacement(
+              context,
+              CupertinoPageRoute(
+                builder: (context) => RegistrationPage(),
+              ),
+            );
+          } else {
+            print(snapshot.value);
+            Navigator.pushReplacement(
+              context,
+              CupertinoPageRoute(
+                builder: (context) => HomePage(),
+              ),
+            );
+          }
+        });
       } else {
         showToast("Error validating OTP, try again", Colors.white);
       }
@@ -358,51 +435,27 @@ class _LoginPageState extends State<LoginPage> {
     final FirebaseUser user =
         (await FirebaseAuth.instance.signInWithCredential(credential)).user;
     if (user != null) {
-      await existence(user.uid);
-    }
-
-    return user;
-  }
-
-  Future<bool> existence(String uid) async {
-    bool shopExists = false;
-
-    final dbRef = FirebaseDatabase.instance.reference();
-    await dbRef.once().then((DataSnapshot snapshot) async {
-      Map<dynamic, dynamic> values = snapshot.value;
-      values.forEach((keys, value) {
-        dbRef.child(keys).once().then((DataSnapshot snap) {
-          Map<dynamic, dynamic> vals = snap.value;
-          vals.forEach((key, value) {
-            if (key == uid) {
-              setState(() {
-                shopExists = true;
-                print('I found a match');
-                print(key);
-                return true;
-              });
-            }
-          });
-        }).then((value) {
-          if (shopExists) {
-            print('Exists');
-            Navigator.pushReplacement(
-              context,
-              CupertinoPageRoute(
-                builder: (context) => HomePage(),
-              ),
-            );
-          } else {
-            print('Does not exist');
-            Navigator.pushReplacement(
-              context,
-              CupertinoPageRoute(
-                builder: (context) => RegistrationPage(),
-              ),
-            );
-          }
-        });
+      final dbRef =
+          FirebaseDatabase.instance.reference().child('Users').child(user.uid);
+      dbRef.once().then((DataSnapshot snapshot) async {
+        if (snapshot.value == null) {
+          Navigator.pushReplacement(
+            context,
+            CupertinoPageRoute(
+              builder: (context) => RegistrationPage(),
+            ),
+          );
+        } else {
+          print(snapshot.value);
+          Navigator.pushReplacement(
+            context,
+            CupertinoPageRoute(
+              builder: (context) => HomePage(),
+            ),
+          );
+        }
       });
-    });
+    }
+    return user;
   }
 }

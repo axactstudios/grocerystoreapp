@@ -1,5 +1,8 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:grocerystoreapp/Classes/Constants.dart';
+import 'package:grocerystoreapp/Screens/NavBar.dart';
 import 'package:random_string/random_string.dart';
 
 class ReferralCode extends StatefulWidget {
@@ -28,25 +31,48 @@ class _ReferralCodeState extends State<ReferralCode> {
       'shopAddress': widget.shopAddress,
       'shopUid': widget.shopUid
     });
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => HomePage()));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: kSecondaryColor,
         body: Form(
-      child: Column(
-        children: [
-          TextFormField(
-            controller: referralCode,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Spacer(),
+              Image.asset(
+                'images/referral.png',
+                height: MediaQuery.of(context).size.height * 0.3,
+                color: kPrimaryColor,
+              ),
+              Center(
+                child: Text(
+                  'Enter your referral code',
+                  style:
+                      GoogleFonts.openSans(fontSize: 24, color: kPrimaryColor),
+                ),
+              ),
+              Spacer(),
+              Container(
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: TextFormField(
+                  controller: referralCode,
+                ),
+              ),
+              Spacer(),
+              RaisedButton(
+                onPressed: () {
+                  writeData();
+                },
+                child: Text('Enter'),
+              ),
+              Spacer(),
+            ],
           ),
-          RaisedButton(
-            onPressed: () {
-              writeData();
-            },
-            child: Text('Enter'),
-          )
-        ],
-      ),
-    ));
+        ));
   }
 }
