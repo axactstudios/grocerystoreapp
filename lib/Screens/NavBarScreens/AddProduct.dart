@@ -96,16 +96,22 @@ class _AddProductState extends State<AddProduct> {
         .child(user.uid)
         .child('Categories');
     dbRef.once().then((DataSnapshot snap) {
-      Map<dynamic, dynamic> values = snap.value;
-      values.forEach((key, value) {
-        categories.add(key);
-      });
-      setState(() {
-        isFetchingCategories = false;
-        category = categories[0];
-        prodCategory = category;
-        print(categories.length);
-      });
+      if (snap.value == null) {
+        setState(() {
+          isFetchingCategories = false;
+        });
+      } else {
+        Map<dynamic, dynamic> values = snap.value;
+        values.forEach((key, value) {
+          categories.add(key);
+        });
+        setState(() {
+          isFetchingCategories = false;
+          category = categories[0];
+          prodCategory = category;
+          print(categories.length);
+        });
+      }
     });
   }
 
